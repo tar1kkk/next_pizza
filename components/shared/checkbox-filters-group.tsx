@@ -30,20 +30,27 @@ const CheckboxFilterGroup: React.FC<Props> = (
     }
 ) => {
     const [showAll, setShowAll] = useState(false);
+    const [searchValue, setSearchValue] = useState('');
 
-    const list = showAll ? items : defaultItems?.slice(0, limit);
+    const onChangeSearchInput = (value: string) => {
+        setSearchValue(value);
+    }
+
+    const list = showAll ? items.filter((item) => item.text.toLowerCase().includes(searchValue.toLowerCase())) : defaultItems.slice(0, limit);
+
+
     return (
         <div className={className}>
             <p className='font-bold mb-3'>{title}</p>
 
             {showAll && (
                 <div className='mb-5'>
-                    <Input placeholder={searchInputPlaceholder} className='bg-gray-50 border-none'/>
+                    <Input onChange={e => onChangeSearchInput(e.target.value)} placeholder={searchInputPlaceholder} className='bg-gray-50 border-none'/>
                 </div>
             )}
 
             <div className='flex flex-col gap-4 max-h-96 pr-2 overflow-auto scrollbar'>
-                {list.map((item,index)  => (
+                {list.map((item, index) => (
                     <FilterCheckbox
                         onCheckedChange={(ids) => console.log(ids)}
                         checked={false}
