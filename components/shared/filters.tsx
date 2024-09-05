@@ -1,4 +1,3 @@
-'use client'
 import React from 'react';
 import {cn} from "@/lib/utils";
 import {Title} from "@/components/shared/title";
@@ -33,6 +32,7 @@ const Filters: React.FC<Props> = ({className}) => {
             </div>
 
             <CheckboxFilterGroup
+                searchInputPlaceholder='Поиск...'
                 title={'Ингредиенты'}
                 items={[
                     {
@@ -61,8 +61,8 @@ const Filters: React.FC<Props> = ({className}) => {
                     },
                 ]}
                 className='mt-5'
-                limit={6}
-                defaultValue={[
+                limit={4}
+                defaultItems={[
                     {
                         text: 'Сырный соус',
                         value: '1',
