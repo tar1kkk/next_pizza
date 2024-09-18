@@ -23,7 +23,7 @@ const CheckboxFilterGroup: React.FC<Props> = (
         title,
         items,
         defaultItems,
-        limit = 5,
+        limit = 4,
         searchInputPlaceholder,
         className,
         onChange,
@@ -38,7 +38,6 @@ const CheckboxFilterGroup: React.FC<Props> = (
         setSearchValue(value);
     }
 
-
     const list = showAll ? items.filter((item) => item.text.toLowerCase().includes(searchValue.toLowerCase())) : defaultItems.slice(0, limit);
 
     if (loading) {
@@ -48,6 +47,7 @@ const CheckboxFilterGroup: React.FC<Props> = (
                 {Array.from({length : limit}).map((item,index)=>(
                     <Skeleton key={index} className='h-6 mb-4 rounded-[8px]'/>
                 ))}
+                <Skeleton className='mb-5 w-28 h-6 rounded-[8px]'/>
             </div>
         )
     }

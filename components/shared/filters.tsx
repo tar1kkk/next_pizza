@@ -14,9 +14,8 @@ interface Props {
 }
 
 const Filters: React.FC<Props> = ({className}) => {
-    const {ingredients} = useFilterIngredients();
+    const {ingredients,loading} = useFilterIngredients();
     const items = ingredients.map((item)=> ({value : String(item.id ),text : item.name}))
-    console.log(items)
     return (
         <div className={cn('', className)}>
             <Title text='Фильтрация' size='sm' className='mb-5 font-bold'/>
@@ -40,9 +39,9 @@ const Filters: React.FC<Props> = ({className}) => {
                 searchInputPlaceholder='Поиск...'
                 title={'Ингредиенты'}
                 items={items}
-                loading={false}
+                loading={loading}
                 className='mt-5'
-                limit={4}
+                limit={6}
                 defaultItems={items.slice(0,6)}/>
         </div>
     );
