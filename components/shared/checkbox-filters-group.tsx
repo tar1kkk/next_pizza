@@ -1,7 +1,7 @@
 'use client';
 import React, {useState} from 'react';
 import {FilterChecboxProps, FilterCheckbox} from "@/components/shared/filter-checkbox";
-import {Input} from "@/components/ui";
+import {Input, Skeleton} from "@/components/ui";
 
 type Item = FilterChecboxProps;
 
@@ -10,6 +10,7 @@ interface Props {
     items: Item[];
     defaultItems: Item[];
     limit?: number;
+    loading?: boolean;
     searchInputPlaceholder?: string;
     className?: string;
     onChange?: (values: string[]) => void;
@@ -27,6 +28,7 @@ const CheckboxFilterGroup: React.FC<Props> = (
         className,
         onChange,
         defaultValue,
+        loading,
     }
 ) => {
     const [showAll, setShowAll] = useState(false);
@@ -36,16 +38,27 @@ const CheckboxFilterGroup: React.FC<Props> = (
         setSearchValue(value);
     }
 
+
     const list = showAll ? items.filter((item) => item.text.toLowerCase().includes(searchValue.toLowerCase())) : defaultItems.slice(0, limit);
 
-
+    if (loading) {
+        return (
+            <div className={className}>
+                <p className='font-bold mb-3'>{title}</p>
+                {Array.from({length : limit}).map((item,index)=>(
+                    <Skeleton key={index} className='h-6 mb-4 rounded-[8px]'/>
+                ))}
+            </div>
+        )
+    }
     return (
         <div className={className}>
             <p className='font-bold mb-3'>{title}</p>
 
             {showAll && (
                 <div className='mb-5'>
-                    <Input onChange={e => onChangeSearchInput(e.target.value)} placeholder={searchInputPlaceholder} className='bg-gray-50 border-none'/>
+                    <Input onChange={e => onChangeSearchInput(e.target.value)} placeholder={searchInputPlaceholder}
+                           className='bg-gray-50 border-none'/>
                 </div>
             )}
 
