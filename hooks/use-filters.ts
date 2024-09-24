@@ -1,4 +1,4 @@
-import {useRouter, useSearchParams} from "next/navigation";
+import { useSearchParams} from "next/navigation";
 import {useSet} from "react-use";
 import {useState} from "react";
 
@@ -27,6 +27,12 @@ export const useFilters = () => {
         priceFrom: Number(searchParams.get('priceFrom')) || undefined,
         priceTo: Number(searchParams.get('priceTo')) || undefined,
     });
+    const onChangePrice = (name: keyof PriceProps, value: number) => {
+        setPrice({
+            ...price,
+            [name]: value,
+        })
+    }
     return {
         selectedIngredients,
         sizes,
@@ -35,6 +41,7 @@ export const useFilters = () => {
         setPrice,
         setPizzaTypes: togglePizzaTypes,
         setSize: toggleSizes,
-        onAddId : toggleIngredients
+        onAddId : toggleIngredients,
+        onChangePrice
     }
 }

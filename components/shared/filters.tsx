@@ -9,19 +9,19 @@ import qs from 'qs';
 import {useRouter, useSearchParams} from "next/navigation";
 import {useFilters} from "@/hooks/use-filters";
 import {useIngredients} from "@/hooks/use-ingredients";
+import {useQueryFilters} from "@/hooks/use-query-filters";
 
 interface Props {
     className?: string;
 }
+
 interface PriceProps {
     priceFrom?: number;
     priceTo?: number;
 }
 
 
-
 const Filters: React.FC<Props> = ({className}) => {
-    const router = useRouter();
     const {
         selectedIngredients,
         sizes,
@@ -30,35 +30,15 @@ const Filters: React.FC<Props> = ({className}) => {
         setPrice,
         setPizzaTypes,
         setSize,
-        onAddId
+        onAddId,
+        onChangePrice
     } = useFilters();
+
+    useQueryFilters(selectedIngredients, sizes, pizzaTypes, price);
+
     const {ingredients, loading} = useIngredients();
 
     const items = ingredients.map((item) => ({value: String(item.id), text: item.name}))
-
-
-    const onChangePrice = (name: keyof PriceProps, value: number) => {
-        setPrice({
-            ...price,
-            [name]: value,
-        })
-    }
-
-    useEffect(() => {
-        const filters = {
-            ...price,
-            pizzaTypes: Array.from(pizzaTypes),
-            sizes: Array.from(sizes),
-            ingredients: Array.from(selectedIngredients),
-        };
-
-        const query = qs.stringify(filters, {
-            arrayFormat: 'comma',
-        });
-        router.push(`?${query}`, {
-            scroll: false,
-        });
-    }, [price, pizzaTypes, sizes, selectedIngredients, router]);
 
 
     return (
