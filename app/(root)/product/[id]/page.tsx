@@ -27,7 +27,7 @@ export default async function ProductPage({params: {id}}: { params: { id: string
                         placeat porro praesentium quibusdam quis repellendus tempore vitae?</p>
 
                     <GroupVariant
-                        selectedValue={'2'}
+                        selectedValue={'1'}
                         items={[
                             {
                                 name: 'Маленькая',
@@ -35,7 +35,7 @@ export default async function ProductPage({params: {id}}: { params: { id: string
                             },
                             {
                                 name: 'Средняя',
-                                value: '2'
+                                value: '2',
                             },
                             {
                                 name: 'Большая',

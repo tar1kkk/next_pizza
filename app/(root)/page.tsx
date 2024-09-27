@@ -4,7 +4,6 @@ import TopBar from "@/components/shared/top-bar";
 import Filters from "@/components/shared/filters";
 import ProductsGroupList from "@/components/shared/products-group-list";
 import {prisma} from "@/prisma/prisma-client";
-import {useEffect} from "react";
 
 
 export default async function Home() {
