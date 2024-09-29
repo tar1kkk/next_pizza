@@ -13,8 +13,9 @@ export const metadata: Metadata = {
     title: 'Pizza | Главная',
 };
 
-export default function RootLayout({children}: Readonly<{
+export default function HomeLayout({children,modal}: Readonly<{
     children: React.ReactNode;
+    modal : React.ReactNode;
 }>) {
     return (
         <html lang="en">
@@ -22,6 +23,7 @@ export default function RootLayout({children}: Readonly<{
         <main className='min-h-screen'>
             <Header/>
             {children}
+            {modal}
         </main>
         </body>
         </html>
