@@ -1,9 +1,9 @@
 import {prisma} from "@/prisma/prisma-client";
 import {notFound} from "next/navigation";
-import {Container} from "@/components/shared";
-import {ProductImage} from "@/components/shared/products-image";
-import {Title} from "@/components/shared/title";
-import {GroupVariant} from "@/components/shared/group-variants";
+import {Container} from "@/shared/components/shared/container";
+import {ProductImage} from "@/shared/components/shared/products-image";
+import {Title} from "@/shared/components/shared/title";
+import {GroupVariant} from "@/shared/components/shared/group-variants";
 
 export default async function ProductPage({params: {id}}: { params: { id: string } }) {
     const product = await prisma.product.findFirst({
