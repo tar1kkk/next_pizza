@@ -1,14 +1,15 @@
-import React, {FC, useState} from 'react';
+import React from 'react';
 import {cn} from "@/shared/lib/utils";
 import {ProductImage} from "@/shared/components/shared/products-image";
 import {Title} from "@/shared/components/shared/title";
 import {Button} from "@/shared/components/ui";
 import {GroupVariant} from "@/shared/components/shared/group-variants";
-import {mapPizzaType, PizzaSize, pizzaSizes, PizzaType, pizzaTypes} from "@/shared/constants/pizza";
+import {mapPizzaType, PizzaSize,  PizzaType, pizzaTypes} from "@/shared/constants/pizza";
 import {IngredientItem} from '@/shared/components/shared/ingredient-item';
 import {Ingredient} from ".prisma/client";
-import {useSet} from "react-use";
 import {ProductItem} from "@prisma/client";
+import {calcTotalPizzaPrice} from "@/shared/lib/calc-total-pizza-price";
+import {usePizzaOptions} from "@/shared/hooks/use-pizza-options";
 
 
 interface Props {
@@ -21,25 +22,21 @@ interface Props {
 }
 
 export const ChoosePizzaForm: React.FC<Props> = ({className, name, items, imageUrl, ingredients, onClickAddCart,}) => {
-    const [size, setSize] = useState<PizzaSize>(20);
-    const [type, setType] = useState<PizzaType>(1);
-    const [selectedIngredients, {toggle: addIngredient}] = useSet(new Set<number>([]));
 
-
-    const pizzaPrice = items.find((item) => item.pizzaType === type && item.size === size)?.price;
-    const totalPrice = ingredients
-        .filter(item => selectedIngredients.has(item.id))
-        .reduce((acc, next) => acc + next.price, pizzaPrice);
+    const {size, type, selectedIngredients,  setType, setSize, availableSizes,addIngredient} = usePizzaOptions(items);
     const textDetails = `${size} см, ${mapPizzaType[type]} пицца`;
+    const totalPrice = calcTotalPizzaPrice(items, ingredients, type, size, selectedIngredients)
+
 
     const handleClick = () => {
         onClickAddCart?.();
         console.log({
             size,
             type,
-            ingredients: ingredients.filter((item) => selectedIngredients.has(item.id)).map(item=> item.name),
+            ingredients: ingredients.filter((item) => selectedIngredients.has(item.id)).map(item => item.name),
         })
     }
+
     return (
         <div className={cn(className, 'flex flex-1')}>
             <ProductImage imageUrl={imageUrl} size={size}/>
@@ -47,7 +44,7 @@ export const ChoosePizzaForm: React.FC<Props> = ({className, name, items, imageU
                 <Title text={name} size='md' className='font-extrabold nb-1'/>
                 <p className='text-gray-400'>{textDetails}</p>
                 <div className='flex flex-col gap-4 mt-5'>
-                    <GroupVariant items={pizzaSizes} value={String(size)}
+                    <GroupVariant items={availableSizes} value={String(size)}
                                   onClick={value => setSize(Number(value) as PizzaSize)}/>
                     <GroupVariant items={pizzaTypes} value={String(type)}
                                   onClick={value => setType(Number(value) as PizzaType)}/>
