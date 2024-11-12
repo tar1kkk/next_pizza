@@ -1,18 +1,36 @@
-import React from 'react';
+'use client'
+import React, {useEffect, useState} from 'react';
 import {cn} from "@/shared/lib/utils";
 import {Container} from "./container";
 import Image from "next/image";
-import {Button} from "../ui";
-import {User} from "lucide-react";
+
 import Link from "next/link";
 import SearchInput from "@/shared/components/shared/search-input";
 import {CartButton} from "@/shared/components/shared/cart-button";
+import {ProfileButton} from "@/shared/components/shared/profile-button";
+import {AuthModal} from "@/shared/components/shared/modals/auth-modal";
+import {useSearchParam} from "react-use";
+import {useSearchParams} from "next/navigation";
+import toast from "react-hot-toast";
 
 interface Props {
+    hasSearch? : boolean;
+    hasCart? : boolean;
     className?: string;
 }
 
-const Header: React.FC<Props> = ({className}) => {
+const Header: React.FC<Props> = ({className,hasSearch = true,hasCart = true}) => {
+    const [open,setOpen] = useState(false);
+
+    const searchParams = useSearchParams();
+    useEffect(() => {
+        if(searchParams.has('verified')){
+            setTimeout(()=>{
+                toast.success('Аккаунт успешно подтвержден');
+            },500)
+        }
+    }, []);
+
     return (
         <Container className={cn(className || '', 'flex items-center justify-between py-12')}>
             {/* Left side*/}
@@ -26,19 +44,16 @@ const Header: React.FC<Props> = ({className}) => {
                 </div>
             </Link>
 
-            <div className='mix-10 flex-1'>
+            {hasSearch && <div className='mx-10 flex-1'>
                 <SearchInput/>
-            </div>
+            </div>}
             {/* Right side*/}
             <div className='flex items-center gap-3'>
-                <Button variant='outline' className='flex items-center gap-1'>
-                    <User size={16}/>
-                    Войти
-                </Button>
-
-                <div>
+                <AuthModal open={open} onClose={()=> setOpen(false)}/>
+                <ProfileButton onClickLogin={()=> setOpen(true)}/>
+                {hasCart && <div>
                     <CartButton/>
-                </div>
+                </div>}
             </div>
         </Container>
     );

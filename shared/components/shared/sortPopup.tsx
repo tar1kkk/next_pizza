@@ -1,6 +1,5 @@
 import React from 'react';
 import {cn} from "@/shared/lib/utils";
-import {Popover} from "@/shared/components/ui";
 import {ArrowUpDown} from "lucide-react";
 
 

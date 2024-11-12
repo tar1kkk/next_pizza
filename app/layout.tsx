@@ -1,5 +1,6 @@
 import {Nunito} from 'next/font/google';
 import './globals.css';
+import {Providers} from "@/shared/components/shared/providers";
 
 const nunito = Nunito({
     subsets: ['cyrillic'],
@@ -17,7 +18,7 @@ export default function RootLayout({children}: Readonly<{
             <link data-rh='true' rel='icon' href='https://cdn-icons-png.flaticon.com/512/6978/6978255.png'/>
         </head>
         <body className={nunito.variable}>
-        {children}
+        <Providers>{children}</Providers>
         </body>
         </html>
     );

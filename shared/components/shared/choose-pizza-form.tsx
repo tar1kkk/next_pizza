@@ -17,24 +17,23 @@ interface Props {
     name: string;
     ingredients: Ingredient[];
     items: ProductItem[];
+    onSubmit: (itemId : number, ingredients : number[])=> void;
     onClickAddCart?: VoidFunction;
+    loading?: boolean;
     className?: string;
 }
 
-export const ChoosePizzaForm: React.FC<Props> = ({className, name, items, imageUrl, ingredients, onClickAddCart,}) => {
+export const ChoosePizzaForm: React.FC<Props> = ({className,onSubmit, name, items, imageUrl, ingredients, onClickAddCart,loading}) => {
 
-    const {size, type, selectedIngredients,  setType, setSize, availableSizes,addIngredient} = usePizzaOptions(items);
+    const {size, type, selectedIngredients,  setType, setSize, availableSizes,addIngredient,currentItemId} = usePizzaOptions(items);
     const textDetails = `${size} см, ${mapPizzaType[type]} пицца`;
     const totalPrice = calcTotalPizzaPrice(items, ingredients, type, size, selectedIngredients)
 
 
     const handleClick = () => {
-        onClickAddCart?.();
-        console.log({
-            size,
-            type,
-            ingredients: ingredients.filter((item) => selectedIngredients.has(item.id)).map(item => item.name),
-        })
+        if(currentItemId){
+            onSubmit(currentItemId,Array.from(selectedIngredients));
+        }
     }
 
     return (
@@ -65,6 +64,7 @@ export const ChoosePizzaForm: React.FC<Props> = ({className, name, items, imageU
                     </div>
                 </div>
                 <Button
+                    loading={loading}
                     onClick={handleClick}
                     className="h-[55px] px-10 text-base rounded-[18px] w-full mt-10">
                     Добавить в корзину за {totalPrice} ₴

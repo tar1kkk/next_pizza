@@ -138,17 +138,17 @@ model Order {
 }
 
 model VerificationCode {
-  id Int @id @default(autoincrement())
-
-  user   User @relation(fields: [userId], references: [id])
-  userId Int  @unique
-
-  code String
-
+  id        Int      @id @default(autoincrement())
+  userId    Int      @unique
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  code      String
+  expiresAt DateTime
   createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@unique([userId, code])
 }
+
 
 model Story {
   id              Int    @id @default(autoincrement())

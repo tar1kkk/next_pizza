@@ -1,28 +1,26 @@
 'use client'
-import React from 'react';
+import React, {useState} from 'react';
 import {Dialog} from "@/shared/components/ui";
 import {DialogContent} from "@/shared/components/ui/dialog";
 import {useRouter} from "next/navigation";
 import {ChooseProductForm} from "@/shared/components/shared/choose-product-form";
 import {IProduct} from "@/@types/prisma";
 import {ChoosePizzaForm} from "@/shared/components/shared/choose-pizza-form";
+import {useCartStore} from "@/shared/store/cart";
+import toast from "react-hot-toast";
+import {ProductForm} from "@/shared/components/shared/product-form";
 
 interface Props {
-    className? : string;
+    className?: string;
     product: IProduct;
 }
 
-export const ChooseProductModal : React.FC<Props> = ({className,product})=>{
+export const ChooseProductModal: React.FC<Props> = ({className, product}) => {
     const router = useRouter();
-    const isPizzaForm = Boolean(product.items[0].pizzaType);
     return (
-        <Dialog open={Boolean(product)} onOpenChange={()=> router.back()}>
+        <Dialog open={Boolean(product)} onOpenChange={() => router.back()}>
             <DialogContent className='p-0 max-w-[1060px] min-h-[500px] bg-white overflow-hidden'>
-                {isPizzaForm ? (
-                    <ChoosePizzaForm imageUrl={product.imageUrl} name={product.name} ingredients={product.ingredients} items={product.items}/>
-                ): (
-                    <ChooseProductForm imageUrl={product.imageUrl} name={product.name} ingredients={[] }/>
-                )}
+                <ProductForm product={product}/>
             </DialogContent>
         </Dialog>
     )

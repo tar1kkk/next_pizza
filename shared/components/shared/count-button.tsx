@@ -21,6 +21,7 @@ export const CountButton: React.FC<CountButtonProps> = ({
                 onClick={() => onClick?.('minus')}
                 disabled={value === 1}
                 size={size}
+                type='button'
                 type="minus"
             />
 

@@ -52,14 +52,15 @@ export async function POST(req: NextRequest) {
         }
         const data = (await req.json()) as CreateCartItemValues;
         const userCart = await findOrCreateCart(token);
+
+
         const findCartItem = await prisma.cartItem.findFirst({
             where: {
                 cartId: userCart.id,
                 productItemId: data.productItemId,
-                ingredients: {every: {id: {in: data.ingredients}}},
+                ingredients: {some: {id: {in: data.ingredients}}},
             },
         });
-
         if (findCartItem) {
             await prisma.cartItem.update({
                 where: {
@@ -69,14 +70,23 @@ export async function POST(req: NextRequest) {
                     quantity: findCartItem.quantity + 1,
                 },
             });
-
-            const updatedUserCart = await updateCartTotalAmount(token);
-            const resp = NextResponse.json(updatedUserCart;
-            resp.cookies.set('cartToken', token);
-            return resp;
+        }else {
+            await prisma.cartItem.create({
+                data : {
+                    cartId: userCart.id,
+                    productItemId : data.productItemId,
+                    quantity : 1,
+                    ingredients : {connect : data.ingredients?.map((id)=> ({id}))}
+                }
+            });
         }
+
+        const updatedUserCart = await updateCartTotalAmount(token);
+        const resp = NextResponse.json(updatedUserCart);
+        resp.cookies.set('cartToken', token);
+        return resp;
     } catch (e) {
         console.log(e);
-        return NextResponse.json({message: 'Not found'}, {status: 500});
+        return NextResponse.json({message: 'ошибка корзины'}, {status: 500});
     }
 }

@@ -1,18 +1,24 @@
-import {prisma} from "@/prisma/prisma-client";
+import { prisma } from "@/prisma/prisma-client";
 
 export const findOrCreateCart = async (token: string) => {
-    let userCart = await prisma.cart.findFirst({
-        where: {
-            token,
-        },
-    })
-    if (!userCart) {
-        userCart = await prisma.cart.create({
-            data: {
+    try {
+        let userCart = await prisma.cart.findFirst({
+            where: {
                 token,
             },
         });
-    }
 
-    return userCart;
+        if (!userCart) {
+            userCart = await prisma.cart.create({
+                data: {
+                    token,
+                },
+            });
+        }
+
+        return userCart;
+    } catch (error) {
+        console.error("Error in findOrCreateCart:", error);
+        throw new Error("Unable to find or create cart");
+    }
 };

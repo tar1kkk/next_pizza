@@ -30,7 +30,7 @@ const SearchInput: React.FC<Props> = ({className}) => {
         } catch (e) {
             console.error(e);
         }
-    }, 250,[searchQuery]);
+    }, 250, [searchQuery]);
 
     const onClickItem = () => {
         setFocused(false);

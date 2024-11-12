@@ -5,6 +5,7 @@ import {Title} from "@/shared/components/shared/title";
 import ProductCard from "@/shared/components/shared/product-card";
 import {useIntersection} from "react-use";
 import {useCategoryStore} from "@/shared/store/category";
+import {Product} from ".prisma/client";
 
 interface Props {
     className?: string;
@@ -36,7 +37,7 @@ const ProductsGroupList: React.FC<Props> = ({className, title, items, listClassN
                     .filter((product) => product.items.length > 0)
                     .map((product, idx) => (
                         <ProductCard key={product.id} id={product.id} price={product.items[0].price}
-                                     imageUrl={product.imageUrl} name={product.name}/>
+                                     imageUrl={product.imageUrl} name={product.name} ingredients={product.ingredients}/>
                     ))
                 }
             </div>

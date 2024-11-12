@@ -9,13 +9,14 @@ interface Props {
     name: string;
     ingredients: any[];
     items: any[];
+    price : number;
+    onSubmit?: (itemId : number, ingredients : number[])=> void;
     onClickAdd?: VoidFunction;
+    loading? : boolean;
     className?: string;
 }
 
-export const ChooseProductForm: React.FC<Props> = ({className, name, items, imageUrl, ingredients, onClickAdd,}) => {
-    const totalPrice = 350;
-    const textDetails = '30 см, традиционное тесто'
+export const ChooseProductForm: React.FC<Props> = ({className,onSubmit,loading, name,price, items, imageUrl, ingredients, onClickAdd,}) => {
     return (
         <div className={cn(className, 'flex flex-1')}>
             <div className='flex items-center justify-center flex-1 relative w-full'>
@@ -25,11 +26,12 @@ export const ChooseProductForm: React.FC<Props> = ({className, name, items, imag
 
             <div className='w-[490px] bg-[#f2f6f6] p-7'>
                 <Title text={name} size='md' className='font-extrabold nb-1'/>
-                <p className='text-gray-400'>{textDetails}</p>
 
                 <Button
+                    loading={loading}
+                    onClick={()=> onSubmit()}
                     className="h-[55px] px-10 text-base rounded-[18px] w-full mt-10">
-                    Добавить в корзину за {totalPrice} ₽
+                    Добавить в корзину за {price} ₽
                 </Button>
             </div>
         </div>
