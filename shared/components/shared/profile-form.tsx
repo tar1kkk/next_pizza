@@ -10,7 +10,16 @@ import {Button} from "@/shared/components/ui";
 import {FormInput} from "@/shared/components/shared/form-components/form-input";
 import {updateUserInfo} from "@/app/actions";
 
-export const ProfileForm: React.FC = ({data}) => {
+interface ProfileFormProps {
+    data: {
+        id: number;
+        fullName: string;
+        email: string;
+        password?: string;
+    };
+}
+
+export const ProfileForm: React.FC<ProfileFormProps> = ({data}) => {
     const form = useForm({
             resolver: zodResolver(formRegisterSchema),
             defaultValues: {
