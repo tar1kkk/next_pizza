@@ -37,7 +37,7 @@ export default function CheckoutPage() {
             comment: '',
         },
     });
-    const onSubmit = async (data : any) => {
+    const onSubmit = async (data : TCheckoutForm) => {
         try {
             setSubmitiing(true);
             const url = await createOrder(data);
