@@ -1,24 +1,16 @@
-import NextAuth, { NextAuthOptions } from 'next-auth';
-import { compare, hashSync } from 'bcrypt';
-import { UserRole } from '@prisma/client';
-import CredentialsProvider from 'next-auth/providers/credentials';
-import GoogleProvider from 'next-auth/providers/google';
-import GitHubProvider from 'next-auth/providers/github';
-import {prisma} from "@/prisma/prisma-client";
+import NextAuth, { AuthOptions } from "next-auth";
+import GithubProvider from "next-auth/providers/github";
+import GoogleProvider from "next-auth/providers/google";
+import CredentialsProvider from "next-auth/providers/credentials";
+import { prisma } from "@/prisma/prisma-client";
+import { compare, hashSync } from "bcrypt";
+import { UserRole } from "@prisma/client";
 
-export const authOptions: NextAuthOptions = {
-    session: {
-        strategy: 'jwt',
-    },
-    secret: process.env.NEXTAUTH_SECRET,
+export const authOptions: AuthOptions = {
     providers: [
-        GoogleProvider({
-            clientId: process.env.GOOGLE_CLIENT_ID || '',
-            clientSecret: process.env.GOOGLE_CLIENT_SECRET || '',
-        }),
-        GitHubProvider({
-            clientId: process.env.GITHUB_ID || '',
-            clientSecret: process.env.GITHUB_SECRET || '',
+        GithubProvider({
+            clientId: process.env.GITHUB_ID,
+            clientSecret: process.env.GITHUB_SECRET,
             profile(profile) {
                 return {
                     id: profile.id,
@@ -29,30 +21,28 @@ export const authOptions: NextAuthOptions = {
                 };
             },
         }),
+        GoogleProvider({
+            clientId: process.env.GOOGLE_CLIENT_ID,
+            clientSecret: process.env.GOOGLE_SECRET_ID,
+        }),
         CredentialsProvider({
-            name: 'Credentials',
+            name: "Credentials",
             credentials: {
-                email: { label: 'E-Mail', type: 'text', placeholder: 'user@test.ru' },
-                password: { label: 'Пароль', type: 'password' },
+                email: { label: "Email", type: "text" },
+                password: { label: "Password", type: "password" },
             },
             async authorize(credentials) {
-                if (!credentials) return null;
-
-                const values = {
-                    email: credentials.email,
-                };
-
+                if (!credentials) {
+                    return null;
+                }
                 const findUser = await prisma.user.findFirst({
-                    where: values,
+                    where: { email: credentials.email },
                 });
 
                 if (!findUser) return null;
 
                 const isPasswordValid = await compare(credentials.password, findUser.password);
-
-                if (!isPasswordValid) return null;
-
-                if (!findUser.verified) return null;
+                if (!isPasswordValid || !findUser.verified) return null;
 
                 return {
                     id: String(findUser.id),
@@ -63,19 +53,14 @@ export const authOptions: NextAuthOptions = {
             },
         }),
     ],
+    secret: process.env.NEXTAUTH_SECRET,
+    session: {
+        strategy: 'jwt',
+    },
     callbacks: {
         async signIn({ user, account }) {
+            if (!user?.email) return false;
             try {
-                if (account?.provider === 'credentials') {
-                    return true;
-                }
-
-                console.log(user, account);
-
-                if (!user.email) {
-                    return false;
-                }
-
                 const findUser = await prisma.user.findFirst({
                     where: {
                         OR: [
@@ -87,56 +72,47 @@ export const authOptions: NextAuthOptions = {
 
                 if (findUser) {
                     await prisma.user.update({
-                        where: {
-                            id: findUser.id,
-                        },
+                        where: { id: findUser.id },
                         data: {
                             provider: account?.provider,
                             providerId: account?.providerAccountId,
                         },
                     });
-                    return true;
+                } else {
+                    await prisma.user.create({
+                        data: {
+                            email: user.email,
+                            fullName: user.name || `User #${user.id}`,
+                            password: hashSync(user.id.toString(), 10),
+                            verified: account?.provider,
+                            providerId: account?.providerAccountId,
+                        },
+                    });
                 }
-
-                await prisma.user.create({
-                    data: {
-                        email: user.email,
-                        fullName: user.name || 'User #' + user.id,
-                        password: hashSync(user.id.toString(), 10),
-                        verified: new Date(),
-                        provider: account?.provider,
-                        providerId: account?.providerAccountId,
-                    },
-                });
-
                 return true;
-            } catch (error) {
-                console.log(error);
+            } catch (e) {
+                console.error("SignIn Error: ", e);
                 return false;
             }
         },
         async jwt({ token }) {
             const findUser = await prisma.user.findFirst({
-                where: {
-                    email: token.email!,
-                },
+                where: { email: token.email },
             });
 
             if (findUser) {
-                token.id = String(findUser.id);
+                token.id = findUser.id;
                 token.email = findUser.email;
                 token.fullName = findUser.fullName;
                 token.role = findUser.role;
             }
-
             return token;
         },
-        session({ session, token }) {
+        async session({ session, token }) {
             if (session?.user) {
                 session.user.id = token.id;
                 session.user.role = token.role;
             }
-
             return session;
         },
     },
