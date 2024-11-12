@@ -22,6 +22,7 @@ export default function HomeLayout({children,modal}: Readonly<{
         <html lang="en">
         <body className={nunito.variable}>
         <main className='min-h-screen'>
+
             <Header/>
             {children}
             {modal}
