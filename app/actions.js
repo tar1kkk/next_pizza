@@ -102,7 +102,7 @@ export async function createOrder(data) {
     }
 };
 
-export async function updateUserInfo(body: Prisma.UserCreateInput) {
+export async function updateUserInfo(body) {
     try {
         const currentUser = await getUserSession();
 
