@@ -16,5 +16,9 @@ export default async function ProfilePage() {
         }
     });
 
-    return <ProfileForm data={user}/>
+    if (!user) {
+        return redirect('/not-found');  // Перенаправление, если пользователь не найден
+    }
+
+    return <ProfileForm data={user} />
 }
