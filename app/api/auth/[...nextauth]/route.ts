@@ -6,7 +6,7 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import {prisma} from "@/prisma/prisma-client";
 import {compare, hashSync} from "bcrypt";
 
-const authOptions: NextAuthOptions = {
+const authOptions = {
     session: {
         strategy: 'jwt',
     },
